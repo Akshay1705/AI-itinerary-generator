@@ -23,15 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY", "fallback-secret-key")
+SECRET_KEY = 'django-insecure-pu0!hw8gm)(b*d6ysqdp$-88vfu!#(p))4m_f^ef-=et+(y%_n'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", "False") == "True"
+DEBUG = True
 
-ALLOWED_HOSTS = ["https://ai-itinerary-generator-lias.onrender.com"]
-
-STATIC_ROOT = BASE_DIR / "staticfiles"
-
+ALLOWED_HOSTS = []
 
 load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
