@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}AI Travel Planner{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-100 text-gray-800 flex flex-col min-h-screen">
+
+  <!-- Navbar -->
+  <nav class="sticky top-0 z-50 bg-gray-900 text-white shadow-md">
+    <div class="container mx-auto flex justify-between items-center py-4 px-6">
+      <a href="/" class="text-xl font-bold">AI Travel Planner</a>
+      <div class="space-x-6">
+        <a href="/" class="hover:text-gray-300">Home</a>
+        <a href="/generate_itinerary" class="hover:text-gray-300">Generate Itinerary</a>
+        <a href="/about" class="hover:text-gray-300">About</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content Block -->
+  <main class="container mx-auto py-10 flex-grow">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white text-center py-4">
+    <p>&copy; 2025 AI Travel Planner. All Rights Reserved.</p>
+  </footer>
+
+  <!-- Global Scripts -->
+  {% block extra_js %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.querySelector("form");
+    const spinner = document.getElementById("loadingSpinner");
+    const zoomBtn = document.getElementById("zoomBtn");
+    const downloadBtn = document.getElementById("downloadPdfBtn");
+    const itineraryOutput = document.getElementById("itineraryOutput");
+    const modal = document.getElementById("itineraryModal");
+    const modalContent = document.getElementById("modalContent");
+    const closeModal = document.getElementById("closeModal");
+
+    // Spinner logic
+    if (form && spinner) {
+      form.addEventListener("submit", () => {
+        spinner.classList.remove("hidden");
+        spinner.classList.add("opacity-100");
+      });
+      window.addEventListener("pageshow", () => {
+        spinner.classList.add("hidden");
+        spinner.classList.remove("opacity-100");
+      });
+    }
+
+    // Zoom: Show full-screen modal
+    if (zoomBtn && modal && modalContent && itineraryOutput) {
+      zoomBtn.addEventListener("click", () => {
+        modalContent.innerHTML = itineraryOutput.innerHTML;
+        modal.classList.remove("hidden");
+        document.body.style.overflow = "hidden"; // hide background scroll
+      });
+    }
+
+    // Close modal
+    if (closeModal) {
+      closeModal.addEventListener("click", () => {
+        modal.classList.add("hidden");
+        document.body.style.overflow = "auto";
+      });
+    }
+
+    // Download PDF directly
+    if (downloadBtn && itineraryOutput) {
+      downloadBtn.addEventListener("click", () => {
+        const element = itineraryOutput.cloneNode(true);
+        // Optional: remove spinner from cloned content
+        const spinnerInClone = element.querySelector("#loadingSpinner");
+        if (spinnerInClone) spinnerInClone.remove();
+
+        html2pdf()
+          .set({
+            margin: 10,
+            filename: 'itinerary.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          })
+          .from(element)
+          .save();
+      });
+    }
+  });
+  </script>
+
+
+  {% endblock %}
+
+</body>
+</html>
