@@ -1,35 +1,37 @@
+# theme/gemini_service.py
 import os
-import google.generativeai as genai
-from dotenv import load_dotenv
 import re
+from dotenv import load_dotenv
+from google import genai
 
-load_dotenv()  # load .env file
+load_dotenv()
 
-# Configure Gemini with your API key
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+client = genai.Client(
+    api_key=os.getenv("GEMINI_API_KEY")
+)
 
-def clean_text(text):
-    # Remove Markdown symbols (*, #, etc.)
+def clean_text(text: str) -> str:
     return re.sub(r'[*#_`]+', '', text).strip()
 
 def generate_itinerary_with_gemini(destination, days, budget, interests):
     prompt = f"""
-    Generate a clear and structured travel itinerary for {destination}.
-    Trip duration: {days} days.
-    Budget: {budget}.
-    Interests: {interests}.
+Generate a clear and structured travel itinerary.
 
-    Formatting Rules:
-    - Do NOT use *, #, or markdown styling.
-    - Only plain text with numbered days.
-    - Each day should start with "Day X:" followed by activities.
-    - Keep sentences concise and easy to read.
-    """
+Destination: {destination}
+Duration: {days} days
+Budget: {budget}
+Interests: {interests}
 
-    model = genai.GenerativeModel("gemini-1.5-flash")
-    response = model.generate_content(prompt)
+Rules:
+- Plain text only
+- No markdown
+- Each day must start with "Day X:"
+- Keep output concise and practical
+"""
 
-    if response.candidates:
-        return clean_text(response.candidates[0].content.parts[0].text)
-    else:
-        return "No response from Gemini"
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=prompt
+    )
+
+    return clean_text(response.text)
