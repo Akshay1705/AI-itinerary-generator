@@ -1,5 +1,9 @@
+import json
+from django.http import JsonResponse
 from django.shortcuts import render
-from .gemini_service import generate_itinerary_with_gemini   # ✅ import Gemini service
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from .gemini_service import generate_itinerary_with_gemini
 
 def home(request):
     return render(request, "home.html")
@@ -37,5 +41,39 @@ def generate_itinerary_view(request):
         "days": days
     })
 
+@csrf_exempt
+@require_POST
+def generate_itinerary_api(request):
+    try:
+        data = json.loads(request.body.decode("utf-8") or "{}")
+    except ValueError:
+        data = {}
 
+    destination = data.get("destination")
+    days = data.get("days")
+    budget = data.get("budget")
+    interests = data.get("interests")
+
+    itinerary = generate_itinerary_with_gemini(
+        destination,
+        days,
+        budget,
+        interests
+    )
+
+    itinerary_days = itinerary.split("Day ")
+
+    cleaned_days = []
+
+    for day in itinerary_days:
+        if day.strip():
+            cleaned_days.append("Day " + day.strip())
+
+    return JsonResponse({
+        "destination": destination,
+        "days": days,
+        "budget": budget,
+        "interests": interests,
+        "itinerary": cleaned_days
+    })
 
