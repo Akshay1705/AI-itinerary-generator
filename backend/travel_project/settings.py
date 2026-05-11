@@ -136,7 +136,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",           # local dev
-    "https://your-app.vercel.app",     # your deployed frontend
+    "https://voyager-ai-lilac.vercel.app/",     # your deployed frontend
 ]
 
 # Default primary key field type
