@@ -135,8 +135,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 CORS_ALLOWED_ORIGINS = [
+    # "http://127.0.0.1:8000",  # Django backend
     "http://localhost:3000",           # local dev
-    "https://voyager-ai-lilac.vercel.app/",     # your deployed frontend
+    "https://voyager-ai-lilac.vercel.app",     # your deployed frontend
 ]
 
 # Default primary key field type
